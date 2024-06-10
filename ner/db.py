@@ -1,49 +1,66 @@
-import sqlite3
-import click
+import sqlalchemy
 from flask import current_app, g
-# current_app - points to the flask application handling the request
-# g (global) - a unique object for each request used to store information over multiple functions 
+from flask_sqlalchemy import SQLAlchemy
+import click
 
-# Returns a connection to the database
+db = SQLAlchemy()
+
+
 def get_db():
-    # if not connected, conntect
     if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            # convert sql types to python types using declared types in the schema
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
+        db_host = "34.159.220.2"
+        db_user = "SkSyGruppeE"
+        db_pass = "cocacola"
+        db_name = "SkSyProject"
+        db_port = 3306
 
-        # Return rows that behave like dicts
-        g.db.row_factory = sqlite3.Row
+        connection = sqlalchemy.create_engine(
+            sqlalchemy.engine.url.URL.create(
+                drivername="mysql+pymysql",
+                username=db_user,
+                password=db_pass,
+                host=db_host,
+                port=db_port,
+                database=db_name,
+            ),
+            future=True
+        ).connect()
+        g.db = connection.execution_options(stream_results=True)
     return g.db
 
-# close the connection to the database
+
 def close_db(e=None):
-    db = g.pop('db', None)
+    db_conn = g.pop('db', None)
+    if db_conn is not None:
+        db_conn.close()
 
-    if db is not None:
-        db.close()
 
-# initalise the database as specified in schema.sql
 def init_db():
-    db = get_db()
+    db_conn = get_db()
+    with current_app.open_resource('schema.sql') as f:
+        sql_statements = f.read().decode('utf8')
+        for statement in sql_statements.split(';'):
+            if statement.strip():
+                db_conn.execute(sqlalchemy.text(statement))
 
-    # open resource - opens a file relative to the running package
-    with current_app.open_resource('schema.sql') as s:
-        db.executescript(s.read().decode('utf8'))
 
-# click is a module that allows creating cli commands
 @click.command('init_db')
 def init_db_command():
     """Clear the existing data and create new tables."""
-
     init_db()
     click.echo('Initialized the database.')
 
+
 def init_app(app):
-    # call close_db after returning a response
+    db.init_app(app)
     app.teardown_appcontext(close_db)
-    # add a new command that can be called with the flask command
-    # flask --app ner init_db
     app.cli.add_command(init_db_command)
+
+
+def execute_query(query, params=None):
+    db_conn = get_db()
+    if params:
+        result = db_conn.execute(sqlalchemy.text(query), params)
+    else:
+        result = db_conn.execute(sqlalchemy.text(query))
+    return result

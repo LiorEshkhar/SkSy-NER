@@ -2,7 +2,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 
 from ner.auth import login_required, admin_only
-from ner.db import get_db
+from ner.db import execute_query
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 

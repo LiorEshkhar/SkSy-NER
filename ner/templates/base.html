@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     {% if g.user %}
-                        <a class="navbar-brand text-capitalize" href="{{ url_for('posts.myposts') }}">{{ g.user['username'] }}</a>
+                        <a class="navbar-brand text-capitalize" href="{{ url_for('posts.myposts') }}">{{ g.user.username }}</a>
                         <a class="nav-link {% if request.path == url_for('index') %} fw-bold {% endif %}" href="{{ url_for('index') }}">Home</a>
                         <a class="nav-link {% if request.path == url_for('auth.logout') %} fw-bold {% endif %}" href="{{ url_for('auth.logout') }}">Log out</a>
                         <a class="nav-link {% if request.path == url_for('posts.create') %} fw-bold {% endif %}" href="{{ url_for('posts.create') }}">New Post</a>
