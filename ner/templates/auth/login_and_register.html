@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{{ action }}</title>
+{% endblock %}
+{% block body %}
+
+    <div class="container">
+        <div class="col-2"></div>
+        <div class="col box-shadow">
+            <h1>{{ action }}</h1>
+            <form action="{% if action == 'Login' %} {{ url_for('auth.login') }} {% else %} {{ url_for('auth.register') }} {% endif %}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">{{ action }}</button>
+            </form>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+{% endblock %}
