@@ -35,11 +35,10 @@
                                             <!-- begin timeline-body -->
                                             <div class="timeline-body">
                                             <div class="timeline-header">
-                                                <span class="username text-capitalize">{{ post.username }}</span>
-                                                <span>-</span>
+                                                <span class="username text-capitalize">{{ post.username }} - </span>
                                                 <span class="username">{{ post.title }}</span>
                                                 {% if post.public < 1 %}
-                                                    <span class="force-float float-right"><i class="fa-solid fa-lock"></i> Private</span>
+                                                    <span class="username force-float float-right"><i class="fa-solid fa-lock"></i> Private</span>
                                                 {% endif %}    
                                             </div>
                                             <div class="timeline-content">

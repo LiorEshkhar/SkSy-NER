@@ -40,7 +40,7 @@ def login_required(error_msg="Login first to access this part of the site", msg_
     return login_required_decorator
 
 # define a decorator that redirects the user to the login page if it is not logged in
-def admin_only(error_msg="Only admins cann access this part of the site", msg_category="warning"):
+def admin_only(error_msg="Only admins can access this part of the site", msg_category="warning"):
     """
     A decorator to only enable access to admins. If the user is not logged in or not an admin they will be redirected to the login page and an error message will be flashed. 
 
@@ -53,7 +53,7 @@ def admin_only(error_msg="Only admins cann access this part of the site", msg_ca
         def wrapped_view(*args, **kwargs):
             if g.user is None or g.user['role'] != "admin":
                 flash(error_msg, msg_category)
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('index'))
 
             return view(*args, **kwargs)
         return wrapped_view
