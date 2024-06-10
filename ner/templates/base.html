@@ -29,6 +29,9 @@
                         <a class="nav-link {% if request.path == url_for('auth.logout') %} fw-bold {% endif %}" href="{{ url_for('auth.logout') }}">Log out</a>
                         <a class="nav-link {% if request.path == url_for('posts.create') %} fw-bold {% endif %}" href="{{ url_for('posts.create') }}">New Post</a>
                         <a class="nav-link {% if request.path == url_for('posts.myposts') %} fw-bold {% endif %}" href="{{ url_for('posts.myposts') }}">My Posts</a>
+                        {% if g.user.role == "admin" %}
+                            <a class="nav-link {% if request.path == url_for('admin.user_overview') %} fw-bold {% endif %}" href="{{ url_for('admin.user_overview') }}">User Overview</a>
+                        {% endif %}
                     {% else %}
                         <a class="nav-link {% if request.path == url_for('index') %} fw-bold {% endif %}" href="{{ url_for('index') }}">Home</a>
                         <a class="nav-link {% if request.path == url_for('auth.register') %} fw-bold {% endif %}" href="{{ url_for('auth.register')}}">Register</a>

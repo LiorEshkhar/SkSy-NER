@@ -33,8 +33,10 @@ def create_app(test_config=None):
     # import and register blueprints
     from . import auth
     from . import posts
+    from . import admin
     app.register_blueprint(auth.bp)
     app.register_blueprint(posts.bp)
+    app.register_blueprint(admin.bp)
     
     # register the endpoint 'index' additionally to posts.index to allow easier access
     app.add_url_rule('/', 'index')
