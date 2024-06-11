@@ -16,7 +16,8 @@ CREATE TABLE post (
     author_id INTEGER NOT NULL,
     created TIMESTAMP NOT NULL DEFAULT NOW(),
     title VARCHAR(255) NOT NULL,
-    body VARCHAR(255) NOT NULL,
+    body VARCHAR(1023) NOT NULL,
+    analysed_body VARCHAR(1023),
     public BOOLEAN NOT NULL,
     FOREIGN KEY (author_id) REFERENCES user (id)
 );

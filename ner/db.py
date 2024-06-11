@@ -2,41 +2,34 @@ import sqlalchemy
 from flask import current_app, g
 from flask_sqlalchemy import SQLAlchemy
 import click
+# current_app - points to the flask application handling the request
+# g (global) - a unique object for each request used to store information over multiple functions 
+
 
 db = SQLAlchemy()
 
-
 def get_db():
+    """ Returns a connection to the database """
+    # if not connected, conntect
     if 'db' not in g:
-        db_host = "34.159.220.2"
-        db_user = "SkSyGruppeE"
-        db_pass = "cocacola"
-        db_name = "SkSyProject"
-        db_port = 3306
-
-        connection = sqlalchemy.create_engine(
-            sqlalchemy.engine.url.URL.create(
-                drivername="mysql+pymysql",
-                username=db_user,
-                password=db_pass,
-                host=db_host,
-                port=db_port,
-                database=db_name,
-            ),
-            future=True
-        ).connect()
-        g.db = connection.execution_options(stream_results=True)
+        g.db = sqlalchemy.create_engine(
+            current_app.config['SQLALCHEMY_DATABASE_URI']
+            ).connect()
     return g.db
 
 
 def close_db(e=None):
+    """ Close the connection to the database """
     db_conn = g.pop('db', None)
+
     if db_conn is not None:
         db_conn.close()
 
 
 def init_db():
+    """ Initialise the database as specified in schema.sql """
     db_conn = get_db()
+    # open resource opens a file relative to the running package
     with current_app.open_resource('schema.sql') as f:
         sql_statements = f.read().decode('utf8')
         for statement in sql_statements.split(';'):
@@ -44,6 +37,7 @@ def init_db():
                 db_conn.execute(sqlalchemy.text(statement))
 
 
+# click is a module that allows creating cli commands
 @click.command('init_db')
 def init_db_command():
     """Clear the existing data and create new tables."""
@@ -53,7 +47,10 @@ def init_db_command():
 
 def init_app(app):
     db.init_app(app)
+    # call close_db after returning a response
     app.teardown_appcontext(close_db)
+    # add a new command that can be called with the flask command
+    # flask --app ner init_db
     app.cli.add_command(init_db_command)
 
 
