@@ -5,8 +5,9 @@
 
 {% block body %}
     {% if not posts %}
-        <h1 class="dispaly-3 text-center">No posts yet</h1>
+        <h1 class="dispaly-3 text-center mt-4">No posts yet</h1>
     {% else %}
+        <h1 class="dispaly-3 text-center mt-4">{{ title }}</h1>
             <div class="container">
                 <div class="row">
                 <div class="col-md-12">
@@ -35,11 +36,10 @@
                                             <!-- begin timeline-body -->
                                             <div class="timeline-body">
                                             <div class="timeline-header">
-                                                <span class="username text-capitalize">{{ post.username }}</span>
-                                                <span>-</span>
+                                                <span class="username text-capitalize">{{ post.username }} - </span>
                                                 <span class="username">{{ post.title }}</span>
                                                 {% if post.public < 1 %}
-                                                    <span class="force-float float-right"><i class="fa-solid fa-lock"></i> Private</span>
+                                                    <span class="username force-float float-right"><i class="fa-solid fa-lock"></i> Private</span>
                                                 {% endif %}    
                                             </div>
                                             <div class="timeline-content">
