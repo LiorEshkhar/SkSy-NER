@@ -46,6 +46,9 @@ def create():
         if not title:
             error = "Title is required."
 
+        if not body:
+            error = "Body is required."
+
         if error is None:
             db = get_db()
             execute_query(
