@@ -29,7 +29,7 @@ def myposts():
             ORDER BY created DESC",
         {"author_id": g.user.id}
     ).fetchall()
-    return render_template('posts/index.html', posts=posts, title=f"{g.user.username}'s Posts")
+    return render_template('posts/index.html', posts=posts, title=f"{g.user.username.capitalize()}'s Posts")
 
 
 @bp.route('/create', methods=["GET", "POST"])
@@ -62,7 +62,7 @@ def create():
 
         flash(error)
 
-    return render_template('posts/create.html')
+    return render_template('posts/create_and_update.html', action="Create", post=None)
 
 
 def get_post(id, check_author=True):
@@ -111,7 +111,7 @@ def update(id):
             return redirect(url_for('index'))
 
     post = get_post(id)
-    return render_template('posts/update.html', post=post)
+    return render_template('posts/create_and_update.html', action="Update", post=post)
 
 
 @bp.route('/delete/<int:id>?url', methods=["POST"])
