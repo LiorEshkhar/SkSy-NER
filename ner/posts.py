@@ -29,7 +29,7 @@ def myposts():
             ORDER BY created DESC",
         {"author_id": g.user.id}
     ).fetchall()
-    return render_template('posts/index.html', posts=posts, title=f"{g.user['username']}'s Posts")
+    return render_template('posts/index.html', posts=posts, title=f"{g.user.username}'s Posts")
 
 
 @bp.route('/create', methods=["GET", "POST"])
