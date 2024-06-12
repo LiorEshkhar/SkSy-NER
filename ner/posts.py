@@ -108,7 +108,7 @@ def update(id):
             )
             db.commit()
             flash("Post updated", "success")
-            return redirect(url_for('index'))
+            return redirect(url_for('posts.myposts'))
 
     post = get_post(id)
     return render_template('posts/create_and_update.html', action="Update", post=post)

@@ -1,15 +1,10 @@
 import os
-import secrets
 from flask import Flask, render_template, request, flash, redirect, url_for
 
 def create_app(test_config=None):
     # create and configure the app
     # paths in config files are realtive to instance folder
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY=secrets.token_hex(32),
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    )
 
     # load further configuration from a config file
     if test_config is None:

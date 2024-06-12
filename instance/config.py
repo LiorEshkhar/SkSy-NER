@@ -1,5 +1,8 @@
 import sqlalchemy 
 import os
+import secrets
+
+SECRET_KEY=secrets.token_hex(32),
 
 db_type = os.environ.get('NER_DATABASE')
 if  db_type and db_type == 'le':
@@ -23,3 +26,4 @@ SQLALCHEMY_DATABASE_URI= sqlalchemy.engine.url.URL.create(
                 port=db_port,
                 database=db_name,
             )
+SQLALCHEMY_TRACK_MODIFICATIONS=False
