@@ -2,11 +2,11 @@ from functools import wraps
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from ner.db import get_db, execute_query
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+ROLES = ["user", "admin"]
 
 # load the user before each request (not only those handled by the blueprint)
 @bp.before_app_request
@@ -20,53 +20,41 @@ def load_logged_in_user():
             "SELECT * FROM user WHERE id = :id", {"id": user_id}
         ).fetchone()
 
-
-# define a decorator that redirects the user to the login page if it is not logged in
-def login_required(error_msg="Login first to access this part of the site", msg_category="warning"):
+# create a decorator generator for decorators that accept the defined roles
+def generate_login_required_decorator_generator(error_msg, redirect_endpoint, msg_category="warning", roles=ROLES):
     """
-    A decorator to require login. If the user is not logged in they will be redirected to the login page and an error message will be flashed. 
+    A function to generate login-decorator generators 
 
     Args:
-        error_msg: The error message to be flashed 
-        msg_category: The flash category. Warning by default.
+        error_msg: The default error message of the decorator generator to be created
+        msg_category: The default flash category of the decorator generator to be created. Warning by default.
     """
 
-    def login_required_decorator(view):
-        @wraps(view)
-        def wrapped_view(*args, **kwargs):
-            if g.user is None:
-                flash(error_msg, msg_category)
-                return redirect(url_for('auth.login'))
+    def login_required_decorator_generator(error_msg=error_msg, msg_category=msg_category):
+        f"""
+        A decorator generator to verify users are logged in and are in the allowed roles. If the user is not logged in they will be redirected to {redirect_endpoint} and an error message will be flashed. 
 
-            return view(*args, **kwargs)
+        Args:
+            error_msg: The error message to be flashed 
+            msg_category: The flash category. Warning by default.
+        """
 
-        return wrapped_view
+        def login_required_decorator(view):
+            @wraps(view)
+            def wrapped_view(*args, **kwargs):
+                if g.user is None or g.user.role not in roles:
+                    flash(error_msg, msg_category)
+                    return redirect(url_for(redirect_endpoint))
 
-    return login_required_decorator
+                return view(*args, **kwargs)
 
+            return wrapped_view
 
-# define a decorator that redirects the user to the login page if it is not logged in
-def admin_only(error_msg="Only admins can access this part of the site", msg_category="warning"):
-    """
-    A decorator to only enable access to admins. If the user is not logged in or not an admin they will be redirected to the login page and an error message will be flashed. 
+        return login_required_decorator
+    return login_required_decorator_generator
 
-    Args:
-        error_msg: The error message to be flashed 
-        msg_category: The flash category. Warning by default.
-    """
-
-    def admin_only_decorator(view):
-        @wraps(view)
-        def wrapped_view(*args, **kwargs):
-            if g.user is None or g.user.role != "admin":
-                flash(error_msg, msg_category)
-                return redirect(url_for('index'))
-
-            return view(*args, **kwargs)
-
-        return wrapped_view
-
-    return admin_only_decorator
+login_required = generate_login_required_decorator_generator(error_msg="Login first to access this part of the site", redirect_endpoint='auth.login')
+admin_only = generate_login_required_decorator_generator(error_msg="Only admins can access this part of the site", redirect_endpoint='index', roles=["admin"])
 
 
 @bp.route('/register', methods=['GET', 'POST'])
