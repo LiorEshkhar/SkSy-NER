@@ -21,16 +21,16 @@ def load_logged_in_user():
         ).fetchone()
 
 # create a decorator generator for decorators that accept the defined roles
-def generate_login_required_decorator_generator(error_msg, redirect_endpoint, msg_category="warning", roles=ROLES):
+def parameterized_login_required_decorator_generator(error_msg, redirect_endpoint, msg_category="warning", roles=ROLES):
     """
-    A function to generate login-decorator generators 
+    A function to generate parameterized login-decorator
 
     Args:
         error_msg: The default error message of the decorator generator to be created
         msg_category: The default flash category of the decorator generator to be created. Warning by default.
     """
 
-    def login_required_decorator_generator(error_msg=error_msg, msg_category=msg_category):
+    def parameterized_login_required_decorator(error_msg=error_msg, msg_category=msg_category):
         f"""
         A decorator generator to verify users are logged in and are in the allowed roles. If the user is not logged in they will be redirected to {redirect_endpoint} and an error message will be flashed. 
 
@@ -51,10 +51,10 @@ def generate_login_required_decorator_generator(error_msg, redirect_endpoint, ms
             return wrapped_view
 
         return login_required_decorator
-    return login_required_decorator_generator
+    return parameterized_login_required_decorator
 
-login_required = generate_login_required_decorator_generator(error_msg="Login first to access this part of the site", redirect_endpoint='auth.login')
-admin_only = generate_login_required_decorator_generator(error_msg="Only admins can access this part of the site", redirect_endpoint='index', roles=["admin"])
+login_required = parameterized_login_required_decorator_generator(error_msg="Login first to access this part of the site", redirect_endpoint='auth.login')
+admin_only = parameterized_login_required_decorator_generator(error_msg="Only admins can access this part of the site", redirect_endpoint='index', roles=["admin"])
 
 
 @bp.route('/register', methods=['GET', 'POST'])
