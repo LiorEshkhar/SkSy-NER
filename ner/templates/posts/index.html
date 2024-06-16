@@ -43,16 +43,38 @@
                                                 {% endif %}    
                                             </div>
                                             <div class="timeline-content">
-                                                    <p class="lead">
+                                                    <p class="lead" id="postBodySection-{{ post.id }}">
                                                         {{ post.body }}
                                                     </p>
+                                                    <button id="changeTextButton-{{ post.id }}" class="btn btn-primary">Show analysed text</button>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', (event) => {
+                                                    const postBodySection = document.getElementById('postBodySection-{{ post.id }}');
+                                                    const changeTextButton = document.getElementById('changeTextButton-{{ post.id }}');
+
+                                                    const originalText = `{{ post.body | e | replace('\n', ' ') | replace('\r', ' ') }}`;
+                                                    const analysedText = `{{ post.analysed_body | safe | replace('\n', ' ') | replace('\r', ' ') }}`;
+                                                    let isOriginal = true;
+
+                                                    changeTextButton.addEventListener('click', function () {
+                                                        if (isOriginal) {
+                                                            postBodySection.innerHTML = analysedText;
+                                                            changeTextButton.textContent = "Show original text";
+                                                        } else {
+                                                            postBodySection.innerHTML = originalText;
+                                                            changeTextButton.textContent = "Show analysed text";
+                                                        }
+                                                        isOriginal = !isOriginal;
+                                                    });
+                                                });
+                                            </script>
                                             </div>
                                                 {% if g.user.id == post.author_id %}
                                                     <div class="timeline-footer">
                                                             <!-- delete  -->
                                                             <form action="{{ url_for('posts.delete', id=post.id) }}?url={{ request.path }}" method="POST">
                                                                 <!-- update  -->
-                                                                <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("posts.update", id=post.id) }} &quot;'> Update <i class="fa-solid fa-pen-to-square"></i> </button>
+                                                                <button type="button" class="edit btn btn-primary" onClick='location.href=&quot;{{ url_for("posts.update", id=post.id) }} &quot;'> Update <i class="fa-solid fa-pen-to-square"></i> </button>
                                                                 <button type="submit" class="delete btn btn-danger" onclick="return confirm('Are you sure?');"> Delete <i class="fa-solid fa-trash"></i> </button>
                                                             </form>
                                                     </div>
