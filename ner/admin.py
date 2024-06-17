@@ -9,8 +9,14 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
 @bp.route('/user_overview')
 @admin_only()
 def user_overview():
-    flash("User overview not implemented yet")
-    return redirect(url_for('index'))
+    users = execute_query(
+        "SELECT *\
+            FROM user\
+            WHERE user.id != :admin_id\
+            ORDER BY created DESC",
+        {"admin_id": g.user.id}
+    ).fetchall()
+    return render_template("admin/user_overview.html", users = users)
 
 @bp.route('/delete_user/<int:id>', methods=["GET", "POST"])
 @admin_only()
