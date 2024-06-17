@@ -42,7 +42,7 @@
                         </td>
                         <td>
                             <!-- View Posts  -->
-                            <button type="button" class="edit btn btn-primary"> <i class="fa-solid fa-eye"></i> </button>
+                            <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("admin.view_user", id=user.id) }} &quot;'> <i class="fa-solid fa-eye"></i> </button>
                         </td>
                         <td>
                             <!-- Delete User  -->

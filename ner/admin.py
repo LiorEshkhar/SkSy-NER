@@ -27,3 +27,16 @@ def delete_user(id):
     db.commit()
     flash("User and all their posts deleted", "success")
     return redirect(url_for('admin.user_overview'))
+
+@bp.route('/view_user/<int:id>', methods=['GET'])
+@admin_only()
+def view_user(id):
+    posts = execute_query(
+        "SELECT p.id, title, body, analysed_body, p.created as created, public, author_id, username\
+            FROM post p JOIN user u ON p.author_id = u.id \
+            WHERE u.id = :id AND p.public = TRUE\
+            ORDER BY created DESC",
+        {"id": id}
+    ).fetchall()
+    username = posts[0].username if posts else ""
+    return render_template('posts/index.html', posts=posts, title=f"{username.capitalize()}'s Posts")
