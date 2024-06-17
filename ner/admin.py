@@ -2,7 +2,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 from werkzeug.exceptions import abort
 
 from ner.auth import login_required, admin_only
-from ner.db import execute_query
+from ner.db import execute_query, get_db
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -18,8 +18,12 @@ def user_overview():
     ).fetchall()
     return render_template("admin/user_overview.html", users = users)
 
-@bp.route('/delete_user/<int:id>', methods=["GET", "POST"])
+@bp.route('/delete_user/<int:id>', methods=["POST"])
 @admin_only()
-def delete_user():
-    flash("Deleting users was not implemented yet")
-    return redirect(url_for('index'))
+def delete_user(id):
+    db = get_db()
+    execute_query("DELETE FROM post WHERE author_id = :id", {"id": id})
+    execute_query("DELETE FROM user WHERE id = :id", {"id": id})
+    db.commit()
+    flash("User and all their posts deleted", "success")
+    return redirect(url_for('admin.user_overview'))
