@@ -1,6 +1,8 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
-
+import spacy
+from spacy import displacy
+import en_core_web_sm
 from ner.auth import login_required, admin_only
 from ner.db import get_db, execute_query
 
@@ -11,7 +13,7 @@ bp = Blueprint('posts', __name__)
 @bp.route('/')
 def index():
     posts = execute_query(
-        "SELECT p.id, title, analysed_body as body, p.created as created, public, author_id, username\
+        "SELECT p.id, title, body, analysed_body, p.created as created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id \
             WHERE p.public = TRUE\
             ORDER BY created DESC"
@@ -23,7 +25,7 @@ def index():
 @login_required("Log in to view your posts")
 def myposts():
     posts = execute_query(
-        "SELECT p.id, title, analysed_body as body, p.created as created, public, author_id, username\
+        "SELECT p.id, title, body, analysed_body, p.created as created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id \
             WHERE author_id = :author_id\
             ORDER BY created DESC",
@@ -52,7 +54,7 @@ def create():
         if error is None:
             db = get_db()
             execute_query(
-                "INSERT INTO post (title, body, author_id, public)\
+                "INSERT INTO post (title, body, analysed_body, author_id, public)\
                     VALUES (:title, :body, :analysed_body, :author_id, :public)",
                 {"title": title, "body": body, "analysed_body": spacy_analysis(body), "author_id": g.user.id, "public": public}
             )
@@ -68,7 +70,7 @@ def create():
 def get_post(id, check_author=True):
     # get the post with the requested ID
     post = execute_query(
-        "SELECT p.id, title, body, created, public, author_id, username\
+        "SELECT p.id, title, body, p.created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id\
             WHERE p.id = :id",
         {"id": id}
@@ -117,7 +119,7 @@ def update(id):
 @bp.route('/delete/<int:id>?url', methods=["POST"])
 @login_required("You can only delete your own posts", "error")
 def delete(id):
-    get_post(id)
+    get_post(id, check_author = not g.user.role == "admin")
     url = request.args.get('url')
     url = url if url else url_for('index')
     db = get_db()
@@ -131,4 +133,9 @@ def spacy_analysis(body):
     """
     Returns the analysed version of body, rendered as HTML
     """
-    return body
+    nlp = en_core_web_sm.load()                              # load language model
+    doc = nlp(body)                                          # process input text
+    html = displacy.render(doc, style="ent", jupyter=False)  # generate html code
+    html = html.replace("\n", "")                # remove new lines for proper rendering in Flask template
+
+    return html
