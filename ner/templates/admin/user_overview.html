@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+{% block head %}
+    <title>User Overview</title>
+{% endblock %}
+
+
+{% block body %}
+
+
+{% if not users %}
+    <h1 class="dispaly-3 text-center mt-4">No Users Yet</h1>
+{% else %}
+    <h1 class="dispaly-3 text-center mt-4">User Overview</h1>
+    <!-- User Overview Table  -->
+    <div class="container">
+        <div class="col box-shadow">
+            <table class="table table-hover table-responsive-sm">
+                <!-- User Overview Headers  -->
+                <thead>
+                <tr>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">View Posts</th>
+                    <th scope="col">Delete</th>
+                </tr>
+                </thead>
+                <!-- Users  -->
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username | capitalize }}</td>
+                        <td>{{ user.created.strftime('%Y %h %d') }}</td>
+                        <td>
+                            {% if user.role == "user" %}
+                                <span class="badge rounded-pill bg-success p-2">User</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-danger p-2">Admin</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- View Posts  -->
+                            <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("admin.view_user", id=user.id) }} &quot;'> <i class="fa-solid fa-eye"></i> </button>
+                        </td>
+                        <td>
+                            <!-- Delete User  -->
+                            <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="POST">
+                                <button type="submit" class="delete btn btn-danger" onclick="return confirm('Are you sure?');"> <i class="fa-solid fa-trash"></i> </button>
+                            </form>
+                        <td>
+                   </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

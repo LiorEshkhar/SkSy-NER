@@ -13,7 +13,7 @@ bp = Blueprint('posts', __name__)
 @bp.route('/')
 def index():
     posts = execute_query(
-        "SELECT p.id as id, title, analysed_body as analysed_body, body as body, p.created as created, public, author_id, username\
+        "SELECT p.id, title, body, analysed_body, p.created as created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id \
             WHERE p.public = TRUE\
             ORDER BY created DESC"
@@ -25,7 +25,7 @@ def index():
 @login_required("Log in to view your posts")
 def myposts():
     posts = execute_query(
-        "SELECT p.id as id, title, body as body, analysed_body as analysed_body, p.created as created, public, author_id, username\
+        "SELECT p.id, title, body, analysed_body, p.created as created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id \
             WHERE author_id = :author_id\
             ORDER BY created DESC",
@@ -40,7 +40,6 @@ def create():
     if request.method == 'POST':
         title = request.form.get('title')
         body = request.form.get('body')
-        body.replace("\n","") # remove newlines
         public = request.form.get('public')
         # SQLite does not support true Boolean, but 0 and 1 for F and T
         public = 0 if not public or public != "on" else 1
@@ -71,7 +70,7 @@ def create():
 def get_post(id, check_author=True):
     # get the post with the requested ID
     post = execute_query(
-        "SELECT p.id, title, body, analysed_body, p.created, public, author_id, username\
+        "SELECT p.id, title, body, p.created, public, author_id, username\
             FROM post p JOIN user u ON p.author_id = u.id\
             WHERE p.id = :id",
         {"id": id}
@@ -94,7 +93,6 @@ def update(id):
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
-        body.replace("\n","")
         public = request.form.get('public')
         public = 0 if not public or public != "on" else 1
         error = None
@@ -121,7 +119,7 @@ def update(id):
 @bp.route('/delete/<int:id>?url', methods=["POST"])
 @login_required("You can only delete your own posts", "error")
 def delete(id):
-    get_post(id)
+    get_post(id, check_author = not g.user.role == "admin")
     url = request.args.get('url')
     url = url if url else url_for('index')
     db = get_db()
@@ -138,6 +136,5 @@ def spacy_analysis(body):
     nlp = en_core_web_sm.load()                              # load language model
     doc = nlp(body)                                          # process input text
     html = displacy.render(doc, style="ent", jupyter=False)  # generate html code
-    html = html.replace("\n", "")                # remove new lines for proper rendering in Flask template
 
     return html
