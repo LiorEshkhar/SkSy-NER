@@ -23,6 +23,7 @@
                 <label class="form-check-label" for="public">Make post public</label>
             </div>
             <button type="submit" class="btn btn-primary">{{ action }} Post</button>
+            <button type="button" class="btn btn-danger" onClick='location.href= &quot;{{ url_for("index") }} &quot;'> Cancel <i class="bi bi-x"></i> </button>
         </form>
     </div>
     <div class="col-2"></div>
