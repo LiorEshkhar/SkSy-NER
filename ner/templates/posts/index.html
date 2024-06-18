@@ -30,7 +30,7 @@
                                             <!-- end timeline-time -->
                                             <!-- begin timeline-icon -->
                                             <div class="timeline-icon">
-                                                <a href="javascript:;">&nbsp;</a>
+                                                <a href="javascript:;" class="timeline-link" data-target="timeline-item-{{ post.id }}" id="timeline-item-{{ post.id }}">&nbsp;</a>
                                             </div>
                                             <!-- end timeline-icon -->
                                             <!-- begin timeline-body -->
@@ -86,6 +86,26 @@
                                             <!-- end timeline-body -->
                                         </li>
                                     {% endfor %}
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', (event) => {
+                                            document.querySelectorAll('.timeline-link').forEach(link => {
+                                                link.addEventListener('click', function(e) {
+                                                    e.preventDefault();
+                                                    const targetId = this.getAttribute('data-target');
+                                                    const targetElement = document.getElementById(targetId);
+
+                                                    // Scroll to the element and center it in the viewport
+                                                    targetElement.scrollIntoView({
+                                                        behavior: 'smooth',
+                                                        block: 'center'
+                                                    });
+
+                                                    // Optionally, update the URL hash (without jumping to the section)
+                                                    window.history.pushState(null, null, `#${targetId}`);
+                                                });
+                                            });
+                                        });
+                                    </script>
                                 </ul>
                                 <!-- end timeline -->
                             </div>
