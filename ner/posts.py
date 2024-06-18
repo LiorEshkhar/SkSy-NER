@@ -136,6 +136,5 @@ def spacy_analysis(body):
     nlp = en_core_web_sm.load()                              # load language model
     doc = nlp(body)                                          # process input text
     html = displacy.render(doc, style="ent", jupyter=False)  # generate html code
-    html = html.replace("\n", "")                # remove new lines for proper rendering in Flask template
 
     return html
