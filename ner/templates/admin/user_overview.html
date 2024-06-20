@@ -33,7 +33,7 @@
                     <tr>
                         <td>{{ user.username | capitalize }}</td>
                         <td>{{ user.created.strftime('%Y %h %d') }}</td>
-                        <td>
+                        <td class="text-center"></td>>
                             {% if user.role == "user" %}
                                 <span class="badge rounded-pill bg-success p-2">User</span>
                             {% else %}
