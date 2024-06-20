@@ -23,8 +23,8 @@
                     <th scope="col">User Name</th>
                     <th scope="col">Date Created</th>
                     <th scope="col">Role</th>
-                    <th scope="col" class="text-center">View Posts</th>
-                    <th scope="col" class="text-center">Delete</th>
+                    <th scope="col">View Posts</th>
+                    <th scope="col">Delete</th>
                 </tr>
                 </thead>
                 <!-- Users  -->
@@ -33,7 +33,7 @@
                     <tr>
                         <td>{{ user.username | capitalize }}</td>
                         <td>{{ user.created.strftime('%Y %h %d') }}</td>
-                        <td class="text-center"></td>>
+                        <td class="text-center">
                             {% if user.role == "user" %}
                                 <span class="badge rounded-pill bg-success p-2">User</span>
                             {% else %}
