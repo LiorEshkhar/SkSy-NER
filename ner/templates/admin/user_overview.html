@@ -23,8 +23,8 @@
                     <th scope="col">User Name</th>
                     <th scope="col">Date Created</th>
                     <th scope="col">Role</th>
-                    <th scope="col">View Posts</th>
-                    <th scope="col">Delete</th>
+                    <th scope="col" class="text-center">View Posts</th>
+                    <th scope="col" class="text-center">Delete</th>
                 </tr>
                 </thead>
                 <!-- Users  -->
@@ -40,16 +40,16 @@
                                 <span class="badge rounded-pill bg-danger p-2">Admin</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="d-flex justify-content-center align-items-center">
                             <!-- View Posts  -->
                             <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("admin.view_user", id=user.id) }} &quot;'> <i class="fa-solid fa-eye"></i> </button>
                         </td>
-                        <td>
+                        <td class="d-flex justify-content-center align-items-center">
                             <!-- Delete User  -->
                             <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="POST">
                                 <button type="submit" class="delete btn btn-danger" onclick="return confirm('Are you sure?');"> <i class="fa-solid fa-trash"></i> </button>
                             </form>
-                        <td>
+                        </td>
                    </tr>
                 {% endfor %}
                 </tbody>
