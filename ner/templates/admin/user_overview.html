@@ -46,11 +46,33 @@
                         </td>
                         <td class="text-center">
                             <!-- Delete User  -->
-                            <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="POST">
-                                <button type="submit" class="delete btn btn-danger" onclick="return confirm('Are you sure?');"> <i class="fa-solid fa-trash"></i> </button>
-                            </form>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-modal-{{ user.id }}"><i class="fa-solid fa-trash"></i></button>
                         </td>
                    </tr>
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="delete-modal-{{ user.id }}" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modal-title">Delete User?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this user?<br>
+                                    This action cannot be reverted!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form style="display: inline;" action="{{ url_for('admin.delete_user', id=user.id) }}" method="POST">                                        
+                                        <!-- Cancel -->
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                                        <!-- Delete -->
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>       
+                    <!-- End Delete Modal -->
                 {% endfor %}
                 </tbody>
             </table>
