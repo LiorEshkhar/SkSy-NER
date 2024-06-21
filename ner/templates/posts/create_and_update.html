@@ -9,7 +9,7 @@
     <div class="col-2"></div>
     <div class="col box-shadow">
         <h1>{{ action }} Post</h1>
-        <form action="{% if action == "Update" %} {{ url_for('posts.update', id=post.id) }} {% else %} {{ url_for('posts.create')}} {% endif %}" method="POST">
+        <form action="{% if action == 'Update' %} {{ url_for('posts.update', id=post.id, url=url) }} {% else %} {{ url_for('posts.create')}} {% endif %}" method="POST">
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input type="text" class="form-control" name="title" required="required" value="{{ request.form.title or post.title }}">
@@ -23,7 +23,7 @@
                 <label class="form-check-label" for="public">Make post public</label>
             </div>
             <button type="submit" class="btn btn-primary">{{ action }} Post</button>
-            <button type="button" class="btn btn-danger" onClick='location.href= &quot;{{ url_for("index") }} &quot;'> Cancel <i class="bi bi-x"></i> </button>
+            <button type="button" class="btn btn-danger" onClick='location.href="{{ url }}"'> Cancel <i class="bi bi-x"></i> </button>
         </form>
     </div>
     <div class="col-2"></div>

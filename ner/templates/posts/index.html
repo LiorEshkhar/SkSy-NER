@@ -48,15 +48,13 @@
                                             </div>
                                                 <div class="timeline-footer">
                                                     <button id="changeTextButton-{{ post.id }}" class="btn btn-secondary">Analysis <i class="fa-solid fa-eye"></i></button>
+                                                    {% if g.user.id == post.author_id %}
+                                                        <!-- update  -->
+                                                        <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("posts.update", url=request.path, id=post.id) }} &quot;'> Update <i class="fa-solid fa-pen-to-square"></i> </button>
+                                                    {% endif %}
                                                     {% if g.user.id == post.author_id or g.user.role == 'admin' %}
-                                                        <form style="display: inline;" action="{{ url_for('posts.delete', id=post.id) }}?url={{ request.path }}" method="POST">
-                                                            {% if g.user.id == post.author_id %}
-                                                                <!-- update  -->
-                                                                <button type="button" class="edit btn btn-primary" onClick='location.href= &quot;{{ url_for("posts.update", id=post.id) }} &quot;'> Update <i class="fa-solid fa-pen-to-square"></i> </button>
-                                                            {% endif %}
-                                                            <!-- delete -->
-                                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-modal-{{ post.id }}">Delete <i class="fa-solid fa-trash"></i></button>
-                                                        </form>
+                                                        <!-- delete -->
+                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-modal-{{ post.id }}">Delete <i class="fa-solid fa-trash"></i></button>
                                                     {% endif %}
                                                 </div>
                                             </div>

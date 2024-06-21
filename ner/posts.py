@@ -64,7 +64,7 @@ def create():
 
         flash(error)
 
-    return render_template('posts/create_and_update.html', action="Create", post=None)
+    return render_template('posts/create_and_update.html', action="Create", post=None, url=url_for('posts.myposts'))
 
 
 def get_post(id, check_author=True):
@@ -87,9 +87,13 @@ def get_post(id, check_author=True):
     return post
 
 
-@bp.route('/update/<int:id>', methods=["GET", "POST"])
+@bp.route('/update/<int:id>?url', methods=["GET", "POST"])
 @login_required("You can only edit your own posts", "error")
 def update(id):
+    # Get url to redirect to after the post was updated
+    url = request.args.get('url')
+    if url is None: url = url_for('index')
+
     if request.method == "POST":
         title = request.form.get('title')
         body = request.form.get('body')
@@ -110,10 +114,11 @@ def update(id):
             )
             db.commit()
             flash("Post updated", "success")
-            return redirect(url_for('posts.myposts'))
+            return redirect(url)
 
     post = get_post(id)
-    return render_template('posts/create_and_update.html', action="Update", post=post)
+    print(url)
+    return render_template('posts/create_and_update.html', action="Update", post=post, url=url)
 
 
 @bp.route('/delete/<int:id>?url', methods=["POST"])
