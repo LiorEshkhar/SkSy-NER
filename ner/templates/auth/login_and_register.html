@@ -11,11 +11,11 @@
             <form action="{% if action == 'Login' %} {{ url_for('auth.login') }} {% else %} {{ url_for('auth.register') }} {% endif %}" method="POST">
                 <div class="mb-3">
                     <label class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" required>
+                    <input type="text" class="form-control" name="username" value="{{ request.form.username }}" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" required>
+                    <input type="password" class="form-control" name="password" value="{{ request.form.password }}" required>
                 </div>
                 <button type="submit" class="btn btn-primary">{{ action }}</button>
             </form>
